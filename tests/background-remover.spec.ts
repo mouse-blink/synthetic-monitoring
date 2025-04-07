@@ -2,6 +2,9 @@ import { test, expect } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("background-remover/");
+  /**
+   * Desabled for US github runner
+   */
   // await expect(page.getByRole("button", { name: "Accept All Cookies" })).toBeVisible({
   //   timeout: 150_000,
   // });
