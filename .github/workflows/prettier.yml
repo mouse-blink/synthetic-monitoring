@@ -1,8 +1,11 @@
 name: autofix.ci
 on:
-  pull_request:
   push:
-permissions: {}
+    branches: [main]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: write
 jobs:
   prettier:
     runs-on: ubuntu-latest
