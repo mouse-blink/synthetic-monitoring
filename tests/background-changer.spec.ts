@@ -1,9 +1,47 @@
 import { test, expect } from "@playwright/test";
 
-test("has title", async ({ page }) => {
+test.beforeEach(async ({ page }) => {
   await page.goto("background-changer/");
-  // Expect a title "to contain" a substring.
+  expect(page.getByRole("button", { name: "Accept All Cookies" })).toBeVisible({
+    timeout: 120_000,
+  });
+  await page.getByRole("button", { name: "Accept All Cookies" }).click();
+});
+
+test("has title", async ({ page }) => {
   await expect(page).toHaveTitle(
     /Change Photo Background - Background Changer | Picsart/,
   );
+  await expect(
+    page.getByText("Change photo background", { exact: true }),
+  ).toBeVisible();
+});
+
+test("has editor", async ({ page }) => {
+  await expect(
+    page.getByRole("img", { name: "Picsart's background remover" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("img", { name: "Picsart's background remover" }),
+  ).toHaveScreenshot();
+  await page.getByTestId("start-screen").getByTestId("button").click();
+  await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().includes("/files") &&
+        response.request().method() === "POST" &&
+        response.status() === 200,
+      { timeout: 150_000 },
+    ),
+    page.getByTestId("input").setInputFiles("fixtures/dog_avatar.png"),
+  ]);
+  await expect(page.getByTestId("BackgroundChanger")).toBeVisible({
+    timeout: 120_000,
+  });
+  await expect(page.locator("#onetrust-banner-sdk")).not.toBeVisible();
+  await expect(page.getByText("Processing your image...")).not.toBeVisible();
+  await expect(page.getByTestId("BackgroundChanger")).toBeVisible();
+  await expect(page.getByTestId("BackgroundChanger")).toHaveScreenshot();
+  await page.locator("button:nth-child(8)").first().click();
+  await expect(page.getByTestId("BackgroundChanger")).toHaveScreenshot();
 });
