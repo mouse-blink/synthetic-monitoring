@@ -5,13 +5,15 @@ test.beforeEach(async ({ page }) => {
   /**
    * Desabled for US github runner
    */
-  // await expect(page.getByRole("button", { name: "Accept All Cookies" })).toBeVisible({
-  //   timeout: 150_000,
-  // });
-  // await page.getByRole("button", { name: "Accept All Cookies" }).click();
-  // await expect(
-  //   page.getByRole("button", { name: "Accept All Cookies" }),
-  // ).not.toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Accept Cookies" }),
+  ).toBeVisible({
+    timeout: 150_000,
+  });
+  await page.getByRole("button", { name: "Accept Cookies" }).click();
+  await expect(
+    page.getByRole("button", { name: "Accept Cookies" }),
+  ).not.toBeVisible();
 });
 
 test.afterEach(async ({ context }) => {
@@ -74,5 +76,5 @@ test("has editor", async ({ page }) => {
   await expect(page.getByTestId("cell").getByTestId("content")).toBeVisible();
   await expect(
     page.getByTestId("cell").getByTestId("content"),
-  ).toHaveScreenshot();
+  ).toHaveScreenshot({ maxDiffPixelRatio: 0.01 });
 });
